@@ -107,7 +107,7 @@ var SampleApp = function() {
             res.send(self.cache_get('index.html') );
         };
 
-        self.routes['varWeb'] = function(req, res) {
+        self.routes['/varWeb'] = function(req, res) {
           res.setHeader('Content-Type', 'text/html');
           res.send(self.cache_get('varWeb.html') );
         };
