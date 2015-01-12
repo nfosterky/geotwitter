@@ -30,7 +30,7 @@ var SampleApp = function() {
             //  allows us to run/test the app locally.
             console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
             self.ipaddress = "127.0.0.1";
-        };
+        }
     };
 
 
@@ -40,10 +40,12 @@ var SampleApp = function() {
     self.populateCache = function() {
         if (typeof self.zcache === "undefined") {
             self.zcache = { 'index.html': '' };
+            self.zcache = { 'varWeb.html': '' };
         }
 
         //  Local cache for static content.
         self.zcache['index.html'] = fs.readFileSync('./index.html');
+        self.zcache['varWeb.html'] = fs.readFileSync('./varWeb.html');
     };
 
 
@@ -104,6 +106,11 @@ var SampleApp = function() {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
         };
+
+        self.routes['varWeb'] = function(req, res) {
+          res.setHeader('Content-Type', 'text/html');
+          res.send(self.cache_get('varWeb.html') );
+        };
     };
 
 
@@ -156,4 +163,3 @@ var SampleApp = function() {
 var zapp = new SampleApp();
 zapp.initialize();
 zapp.start();
-
