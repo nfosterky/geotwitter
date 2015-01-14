@@ -59,8 +59,8 @@ var d = {
         }
 
         res.setHeader('Content-Type', 'text/html');
-        res.send(tweetList);
-        console.log(tweetList);
+        res.send("test");
+        // console.log(tweetList);
 
       } else {
         res.setHeader('Content-Type', 'text/html');
