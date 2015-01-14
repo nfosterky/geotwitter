@@ -59,7 +59,7 @@ var d = {
         }
 
         res.setHeader('Content-Type', 'text/html');
-        res.send("test");
+        res.send(JSON.stringify(tweetList));
         // console.log(tweetList);
 
       } else {
@@ -181,9 +181,9 @@ var SampleApp = function() {
         };
 
         self.routes['/test'] = function(req, res) {
-          // d.getTest(req, res);
-          res.setHeader('Content-Type', 'text/html');
-          res.send("tweetList");
+          d.getTest(req, res);
+          // res.setHeader('Content-Type', 'text/html');
+          // res.send("tweetList");
 
         };
 
