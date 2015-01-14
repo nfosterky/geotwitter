@@ -114,8 +114,10 @@ var SampleApp = function() {
         };
 
         self.routes['/test'] = function(req, res) {
-          d.getData(req, res);
-          
+          // d.getTest(req, res);
+          res.setHeader('Content-Type', 'text/html');
+          res.send(tweetList);
+
         };
 
     };
