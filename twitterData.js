@@ -1,6 +1,5 @@
 module.exports = {
-
-  getData: function (spec) {
+  getData: function (req, res, spec) {
     var Twitter = require("twitter");
 
     var client = new Twitter({
@@ -10,9 +9,9 @@ module.exports = {
       access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
     });
 
-    var lat   = spec.lat,     // '40.7207919',
-      lon     = spec.lon,     // '-74.0007582',
-      r       = spec.radius,  // '0.5km',
+    var lat   = spec.lat ? spec.lat : '40.7207919',
+      lon     = spec.lon ? spec.lon : '-74.0007582',
+      r       = spec.radius ? spec.radius : '0.5km',
       geocode = [lat, lon, r].join(',');
 
     console.log(spec);
@@ -54,7 +53,13 @@ module.exports = {
           tweetList[i] = newTweet;
         }
 
+        res.setHeader('Content-Type', 'text/html');
+        res.send(tweetList);
         console.log(tweetList);
+
+      } else {
+        res.setHeader('Content-Type', 'text/html');
+        res.send("fail");
       }
       // console.log(JSON.stringify(response));  // Raw response object.
     });

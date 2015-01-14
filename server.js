@@ -2,7 +2,7 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
-// var d       = require('./twitterData.js');
+var d       = require('./twitterData.js');
 
 /**
  *  Define the sample application.
@@ -114,8 +114,8 @@ var SampleApp = function() {
         };
 
         self.routes['/test'] = function(req, res) {
-          res.setHeader('Content-Type', 'text/html');
-          res.send("test");
+          d.getData(req, res);
+          
         };
 
     };
