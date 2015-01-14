@@ -14,10 +14,10 @@ var d = {
       access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
     });
 
-    var lat   = spec.lat ? spec.lat : '40.7207919',
-    lon     = spec.lon ? spec.lon : '-74.0007582',
-    r       = spec.radius ? spec.radius : '0.5km',
-    geocode = [lat, lon, r].join(',');
+    var lat   = spec && spec.lat ? spec.lat : '40.7207919',
+      lon     = spec && spec.lon ? spec.lon : '-74.0007582',
+      r       = spec && spec.radius ? spec.radius : '0.5km',
+      geocode = [lat, lon, r].join(',');
 
     console.log(spec);
     console.log("geocode: " + geocode);
@@ -71,6 +71,8 @@ var d = {
   }
 };
 
+
+
 /**
  *  Define the sample application.
  */
@@ -91,12 +93,14 @@ var SampleApp = function() {
         //  Set the environment variables we need.
         self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
         self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+        console.warn(self.port);
 
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
             //  allows us to run/test the app locally.
             console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
             self.ipaddress = "127.0.0.1";
+            // self.ipaddress = "0.0.0.0";  // use for running on vagrant vm
         }
     };
 
@@ -181,10 +185,9 @@ var SampleApp = function() {
         };
 
         self.routes['/test'] = function(req, res) {
-          d.getTest(req, res);
-          res.setHeader('Content-Type', 'text/html');
-          res.send("tweetList");
+          d.getData(req, res);
 
+          console.log("test request");
         };
 
     };
