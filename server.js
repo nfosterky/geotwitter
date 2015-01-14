@@ -3,6 +3,14 @@
 var express = require('express');
 var fs      = require('fs');
 // var d       = require('./twitterData.js');
+//
+var envVars = "";
+
+if (!process.env.TWITTER_CONSUMER_KEY) {
+  envVars = require("./envVars.js");
+  envVars.add();
+}
+
 var d = {
   getData: function (req, res, spec) {
     var Twitter = require("twitter");
@@ -14,10 +22,11 @@ var d = {
       access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
     });
 
-    var lat   = spec && spec.lat ? spec.lat : '40.7207919',
-      lon     = spec && spec.lon ? spec.lon : '-74.0007582',
-      r       = spec && spec.radius ? spec.radius : '0.5km',
-      geocode = [lat, lon, r].join(',');
+    // var lat   = spec && spec.lat ? spec.lat : '40.7207919',
+    //   lon     = spec && spec.lon ? spec.lon : '-74.0007582',
+    //   r       = spec && spec.radius ? spec.radius : '0.5km',
+    //   geocode = [lat, lon, r].join(',');
+    var geocode = spec ? spec : '40.7207919,-74.0007582,0.25km';
 
     console.log(spec);
     console.log("geocode: " + geocode);
@@ -71,8 +80,6 @@ var d = {
   }
 };
 
-
-
 /**
  *  Define the sample application.
  */
@@ -95,12 +102,15 @@ var SampleApp = function() {
         self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
         console.warn(self.port);
 
+        console.warn(self.ipaddress);
+
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
             //  allows us to run/test the app locally.
             console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
+
+            // use 0.0.0.0 when running on vagrant vm, I'm setting in envVars.js
             self.ipaddress = "127.0.0.1";
-            // self.ipaddress = "0.0.0.0";  // use for running on vagrant vm
         }
     };
 
@@ -110,13 +120,16 @@ var SampleApp = function() {
      */
     self.populateCache = function() {
         if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-            self.zcache = { 'varWeb.html': '' };
+            self.zcache = {
+
+              'varWeb.html': ''
+            };
         }
 
         //  Local cache for static content.
         self.zcache['index.html'] = fs.readFileSync('./index.html');
         self.zcache['varWeb.html'] = fs.readFileSync('./varWeb.html');
+
     };
 
 
@@ -166,7 +179,7 @@ var SampleApp = function() {
      *  Create the routing table entries + handlers for the application.
      */
     self.createRoutes = function() {
-        self.routes = { };
+        self.routes = {};
 
         self.routes['/asciimo'] = function(req, res) {
             var link = "http://i.imgur.com/kmbjB.png";
@@ -179,15 +192,22 @@ var SampleApp = function() {
         };
 
         self.routes['/varWeb'] = function(req, res) {
-          console.log(req);
           res.setHeader('Content-Type', 'text/html');
           res.send(self.cache_get('varWeb.html') );
         };
 
-        self.routes['/test'] = function(req, res) {
-          d.getData(req, res);
-
+        self.routes['/request'] = function(req, res) {
+          // res.setHeader('Content-Type', 'text/html');
+          // res.send("test");
+          // d.getData(req, res);
+          console.log(req);
           console.log("test request");
+          res.send("{t:'test'}");
+        };
+
+        self.routes['/test/:geocode'] = function(req, res) {
+          console.log(req.params.geocode);
+          d.getData(req, res, req.params.geocode);
         };
 
     };
@@ -199,12 +219,18 @@ var SampleApp = function() {
      */
     self.initializeServer = function() {
         self.createRoutes();
-        self.app = express.createServer();
+        self.app = express();
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
             self.app.get(r, self.routes[r]);
         }
+
+        // add subfolders -- needed to load js and css
+        self.app.use("/css", express.static(__dirname + '/css'));
+        self.app.use("/js", express.static(__dirname + '/js'));
+
+
     };
 
 
