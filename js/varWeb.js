@@ -1,46 +1,59 @@
-var eleCompass = document.getElementById("compass"),
-  eleLatitude = document.getElementById("latitude"),
-  eleLongitude = document.getElementById("longitude"),
+Zepto (function($) {
+
+  var btnGetTweets  = document.getElementById("btnGetTweets"),
+  eleCompass      = document.getElementById("compass"),
+  eleLatitude     = document.getElementById("latitude"),
+  eleLongitude    = document.getElementById("longitude"),
+  lat, lon,
   compassDir;
 
-if (window.DeviceOrientationEvent) {
+  if (window.DeviceOrientationEvent) {
 
-  // Listen for the deviceorientation event and handle the raw data
-  window.addEventListener('deviceorientation', function(eventData) {
-    var newCompassDir;
+    // Listen for the deviceorientation event and handle the raw data
+    window.addEventListener('deviceorientation', function(eventData) {
+      var newCompassDir;
 
-    if (event.webkitCompassHeading) {
+      if (event.webkitCompassHeading) {
 
-      // Apple works only with this, alpha doesn't work
-      newCompassDir = event.webkitCompassHeading;
-    } else {
-      newCompassDir = event.alpha;
-    }
+        // Apple works only with this, alpha doesn't work
+        newCompassDir = event.webkitCompassHeading;
+      } else {
+        newCompassDir = event.alpha;
+      }
 
-    newCompassDir = newCompassDir.toFixed(0);
+      newCompassDir = newCompassDir.toFixed(0);
 
-    if (compassDir !== newCompassDir) {
-      compassDir = newCompassDir;
-      eleCompass.innerHTML = compassDir;
-    }
+      if (compassDir !== newCompassDir) {
+        compassDir = newCompassDir;
+        eleCompass.innerHTML = compassDir;
+      }
 
-  });
-}
+    });
+  }
 
-function posSuccess (d) {
-  console.log(d);
-  var lat = d.coords.latitude,
+  function posSuccess (d) {
+    console.log(d);
+    lat = d.coords.latitude;
     lon = d.coords.longitude;
 
-  eleLatitude.innerHTML = lat;
-  eleLongitude.innerHTML = lon;
+    eleLatitude.innerHTML = lat;
+    eleLongitude.innerHTML = lon;
 
-  console.log(lat, lon);
-}
+    console.log(lat, lon);
+  }
 
-function posError (e) {
-  console.log(e);
-}
+  function posError (e) {
+    console.log(e);
+  }
 
-var options = {};
-var id = navigator.geolocation.watchPosition(posSuccess, posError, options);
+  var options = {};
+  var id = navigator.geolocation.watchPosition(posSuccess, posError, options);
+
+  btnGetTweets.onclick = function () {
+    var radius = ".25km";  // use either mi or km
+    var geocode = lat + "," + lon + "," + radius;
+
+    window.location.href = "/test/" + geocode;
+  };
+
+});
