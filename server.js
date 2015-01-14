@@ -183,7 +183,7 @@ var SampleApp = function() {
         self.routes['/test'] = function(req, res) {
           // d.getTest(req, res);
           res.setHeader('Content-Type', 'text/html');
-          res.send(tweetList);
+          res.send("tweetList");
 
         };
 
