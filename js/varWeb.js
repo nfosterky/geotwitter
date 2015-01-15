@@ -1,11 +1,13 @@
 Zepto (function($) {
 
   var btnGetTweets  = document.getElementById("btnGetTweets"),
-  eleCompass      = document.getElementById("compass"),
-  eleLatitude     = document.getElementById("latitude"),
-  eleLongitude    = document.getElementById("longitude"),
-  lat, lon,
-  compassDir;
+    eleCompass      = document.getElementById("compass"),
+    eleLatitude     = document.getElementById("latitude"),
+    eleLongitude    = document.getElementById("longitude"),
+    lat, lon,
+    compassDir;
+
+  var options = {}, id;
 
   if (window.DeviceOrientationEvent) {
 
@@ -17,6 +19,7 @@ Zepto (function($) {
 
         // Apple works only with this, alpha doesn't work
         newCompassDir = event.webkitCompassHeading;
+
       } else {
         newCompassDir = event.alpha;
       }
@@ -27,12 +30,10 @@ Zepto (function($) {
         compassDir = newCompassDir;
         eleCompass.innerHTML = compassDir;
       }
-
     });
   }
 
   function posSuccess (d) {
-    console.log(d);
     lat = d.coords.latitude;
     lon = d.coords.longitude;
 
@@ -46,12 +47,12 @@ Zepto (function($) {
     console.log(e);
   }
 
-  var options = {};
-  var id = navigator.geolocation.watchPosition(posSuccess, posError, options);
+  // id can be used for something? maybe to stop watching position?
+  id = navigator.geolocation.watchPosition(posSuccess, posError, options);
 
   btnGetTweets.onclick = function () {
-    var radius = ".25km";  // use either mi or km
-    var geocode = lat + "," + lon + "," + radius;
+    var radius = ".15km",  // use either mi or km
+      geocode = lat + "," + lon + "," + radius;
 
     window.location.href = "/test/" + geocode;
   };
