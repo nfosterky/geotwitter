@@ -22,46 +22,58 @@ var d = {
       access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
     });
 
-    // var lat   = spec && spec.lat ? spec.lat : '40.7207919',
-    //   lon     = spec && spec.lon ? spec.lon : '-74.0007582',
-    //   r       = spec && spec.radius ? spec.radius : '0.5km',
-    //   geocode = [lat, lon, r].join(',');
     var geocode = spec ? spec : '40.7207919,-74.0007582,0.25km';
 
     console.log(spec);
     console.log("geocode: " + geocode);
+    var now = new Date(),
+      year = now.getFullYear(),
+      month = now.getMonth() + 1, // js months are zero based
+      day = now.getDate() - 2,    // only show day old tweets
+      twoDaysAgo = year + "-" + month + "-" + day;
 
+    /*
+     *  geocode: lat,lon,radius
+     *  count: defaults to 15, max is 100
+     *  result_type: recent, popular, mixed
+     *  until: 2012-09-01 // tweets before date
+     */
     var options = {
       geocode: geocode,
       count: 100,
-      result_type: 'recent'
+      until: twoDaysAgo
     };
 
-    client.get('search/tweets', options, function(error, params, response){
-      var rawTweet, newTweet,
-      tweetList = [],
-      results;
+    console.log(options);
+
+    client.get('search/tweets', options, function(error, params,
+        response){
+
+      var tweetList = [],
+        rawTweet,
+        newTweet,
+        results;
 
       if (error) {
-        console.log("error");
-        console.log(JSON.stringify(error));
+        console.log("error: " + JSON.stringify(error));
+        console.log();
         throw error;
       }
 
       if (params && params.hasOwnProperty("statuses")) {
         results = params.statuses;
 
-        console.log(results.length);
+        console.log("results: " + results.length);
         for (var i = 0, l = results.length; i < l; i++) {
-          twt = results[i];
+          rawTweet = results[i];
 
           newTweet = {
-            id          : twt.id_str,
-            lat         : twt.geo.coordinates[0],
-            lon         : twt.geo.coordinates[1],
-            text        : twt.text,
-            datetime    : twt.created_at,
-            screen_name : twt.user.screen_name
+            id          : rawTweet.id_str,
+            lat         : rawTweet.geo.coordinates[0],
+            lon         : rawTweet.geo.coordinates[1],
+            text        : rawTweet.text,
+            datetime    : rawTweet.created_at,
+            screen_name : rawTweet.user.screen_name
           };
 
           tweetList[i] = newTweet;
@@ -69,13 +81,12 @@ var d = {
 
         res.setHeader('Content-Type', 'text/html');
         res.send(JSON.stringify(tweetList));
-        // console.log(tweetList);
 
       } else {
         res.setHeader('Content-Type', 'text/html');
         res.send("fail");
       }
-      // console.log(JSON.stringify(response));  // Raw response object.
+      // console.log(JSON.stringify(response));  // Raw response object.?
     });
   }
 };
@@ -89,29 +100,26 @@ var SampleApp = function() {
     var self = this;
 
 
-    /*  ================================================================  */
-    /*  Helper functions.                                                 */
-    /*  ================================================================  */
+    /*  ==============================================================  */
+    /*  Helper functions.                                               */
+    /*  ==============================================================  */
 
     /**
      *  Set up server IP address and port # using env variables/defaults.
      */
     self.setupVariables = function() {
-        //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-        console.warn(self.port);
+      //  Set the environment variables we need.
+      self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
+      self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 
-        console.warn(self.ipaddress);
+      if (typeof self.ipaddress === "undefined") {
+        //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
+        //  allows us to run/test the app locally.
+        console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
 
-        if (typeof self.ipaddress === "undefined") {
-            //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-            //  allows us to run/test the app locally.
-            console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
-
-            // use 0.0.0.0 when running on vagrant vm, I'm setting in envVars.js
-            self.ipaddress = "127.0.0.1";
-        }
+        // use 0.0.0.0 when using vagrant vm, set in envVars.js
+        self.ipaddress = "127.0.0.1";
+      }
     };
 
 
@@ -119,23 +127,20 @@ var SampleApp = function() {
      *  Populate the cache.
      */
     self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = {
+      if (typeof self.zcache === "undefined") {
+        self.zcache = { 'varWeb.html': '' };
+      }
 
-              'varWeb.html': ''
-            };
-        }
-
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
-        self.zcache['varWeb.html'] = fs.readFileSync('./varWeb.html');
-
+      //  Local cache for static content.
+      self.zcache['index.html'] = fs.readFileSync('./index.html');
+      self.zcache['varWeb.html'] = fs.readFileSync('./varWeb.html');
     };
 
 
     /**
      *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
+     *  @param {string} key  Key identifying content to retrieve from
+     *  cache.
      */
     self.cache_get = function(key) { return self.zcache[key]; };
 
@@ -171,9 +176,9 @@ var SampleApp = function() {
     };
 
 
-    /*  ================================================================  */
-    /*  App server functions (main app logic here).                       */
-    /*  ================================================================  */
+    /*  ==============================================================  */
+    /*  App server functions (main app logic here).                     */
+    /*  ==============================================================  */
 
     /**
      *  Create the routing table entries + handlers for the application.
@@ -183,7 +188,9 @@ var SampleApp = function() {
 
         self.routes['/asciimo'] = function(req, res) {
             var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
+
+            res.send("<html><body><img src='" + link +
+                "'></body></html>");
         };
 
         self.routes['/'] = function(req, res) {
@@ -197,8 +204,6 @@ var SampleApp = function() {
         };
 
         self.routes['/request'] = function(req, res) {
-          // res.setHeader('Content-Type', 'text/html');
-          // res.send("test");
           // d.getData(req, res);
           console.log(req);
           console.log("test request");
