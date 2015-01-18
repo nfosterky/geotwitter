@@ -51,7 +51,7 @@ Zepto (function($) {
   id = navigator.geolocation.watchPosition(posSuccess, posError, options);
 
   btnGetTweets.onclick = function () {
-    var radius = ".15km",  // use either mi or km
+    var radius = ".5km",  // use either mi or km
       geocode = lat + "," + lon + "," + radius;
 
     window.location.href = "/test/" + geocode;
