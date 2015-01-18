@@ -12,6 +12,8 @@ if (!process.env.TWITTER_CONSUMER_KEY) {
 }
 
 var d = {
+  html: [],
+  rawTweets: [],
   getData: function (req, res, spec) {
     var Twitter = require("twitter");
 
@@ -22,10 +24,8 @@ var d = {
       access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
     });
 
-    var geocode = spec ? spec : '40.7207919,-74.0007582,0.25km';
+    var geocode = spec ? spec : '40.7207919,-74.0007582,0.5km';
 
-    console.log(spec);
-    console.log("geocode: " + geocode);
     var now = new Date(),
       year = now.getFullYear(),
       month = now.getMonth() + 1, // js months are zero based
@@ -44,12 +44,11 @@ var d = {
       until: twoDaysAgo
     };
 
-    console.log(options);
-
     client.get('search/tweets', options, function(error, params,
         response){
 
       var tweetList = [],
+        tweetHtml = "",
         rawTweet,
         newTweet,
         results;
@@ -63,10 +62,12 @@ var d = {
       if (params && params.hasOwnProperty("statuses")) {
         results = params.statuses;
 
-        console.log("results: " + results.length);
+        d.rawTweets = results;
+
         for (var i = 0, l = results.length; i < l; i++) {
           rawTweet = results[i];
 
+          // d.getTweetWidget(req, res, rawTweet.id_str);
           newTweet = {
             id          : rawTweet.id_str,
             lat         : rawTweet.geo.coordinates[0],
@@ -76,17 +77,62 @@ var d = {
             screen_name : rawTweet.user.screen_name
           };
 
+          tweetHtml += "<div class='tweet'>" +
+              "<div>latitude: " + newTweet.lat + "</div>" +
+              "<div>longitude: "+ newTweet.lon + "</div>" +
+              "<div>text: "+ newTweet.text + "</div>" +
+              "<div>date: "+ newTweet.datetime + "</div>" +
+              "<div>screen_name: "+ newTweet.screen_name + "</div>" +
+              "</div>";
+
           tweetList[i] = newTweet;
         }
 
         res.setHeader('Content-Type', 'text/html');
-        res.send(JSON.stringify(tweetList));
+        res.send("<html><head>" +
+            "<style>.tweet{border:1px solid black; padding:1rem;}</style>" +
+            "<body>" + tweetHtml + "</body></html>");
+        // res.send(JSON.stringify(tweetList));
 
       } else {
         res.setHeader('Content-Type', 'text/html');
         res.send("fail");
       }
       // console.log(JSON.stringify(response));  // Raw response object.?
+    });
+  },
+  getTweetWidget: function (req, res, tweetId) {
+    var Twitter = require("twitter");
+
+    var client = new Twitter({
+      consumer_key: process.env.TWITTER_CONSUMER_KEY,
+      consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+      access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+      access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
+    });
+
+    client.get('statuses/oembed', {id: tweetId}, function(error, params,
+      response){
+
+        if (error) {
+          console.log(error);
+        }
+
+        if (params) {
+          d.html.push(params.html);
+
+          if (d.html.length === d.rawTweets.length) {
+            console.log("show me some html");
+            res.setHeader('Content-Type', 'text/html');
+            res.send(d.html.join(""));
+          }
+        }
+
+        if (response) {
+          // console.log("response");
+          // console.log(response);
+        }
+
     });
   }
 };
