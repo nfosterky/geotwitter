@@ -91,7 +91,9 @@ var d = {
         res.setHeader('Content-Type', 'text/html');
         res.send("<html><head>" +
             "<style>.tweet{border:1px solid black; padding:1rem;}</style>" +
-            "<body>" + tweetHtml + "</body></html>");
+            "<body>" + tweetHtml +
+            "<script>var data = " + JSON.stringify(tweetList) + ";</script>" +
+            "</body></html>");
         // res.send(JSON.stringify(tweetList));
 
       } else {
