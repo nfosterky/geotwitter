@@ -92,11 +92,11 @@ var d = {
         }
 
 
-        res.setHeader('Content-Type', 'text/html');
-        res.send(tweetHtml);
-        // res.render("index", {
-        //   tweets: tweetList
-        // });
+        // res.setHeader('Content-Type', 'text/html');
+        // res.send(tweetHtml);
+        res.render("index", {
+          tweets: tweetList
+        });
 
 
       } else {
