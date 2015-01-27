@@ -80,25 +80,24 @@ var d = {
             screen_name : rawTweet.user.screen_name
           };
 
-          // tweetHtml += "<div class='tweet'>" +
-          //     "<div>latitude: " + newTweet.lat + "</div>" +
-          //     "<div>longitude: "+ newTweet.lon + "</div>" +
-          //     "<div>text: "+ newTweet.text + "</div>" +
-          //     "<div>date: "+ newTweet.datetime + "</div>" +
-          //     "<div>screen_name: "+ newTweet.screen_name + "</div>" +
-          //     "</div>";
+          tweetHtml += "<div class='tweet'>" +
+              "<div>latitude: " + newTweet.lat + "</div>" +
+              "<div>longitude: "+ newTweet.lon + "</div>" +
+              "<div>text: "+ newTweet.text + "</div>" +
+              "<div>date: "+ newTweet.datetime + "</div>" +
+              "<div>screen_name: "+ newTweet.screen_name + "</div>" +
+              "</div>";
 
           tweetList[i] = newTweet;
         }
 
-        try {
-          res.render("index", {
-            tweets: tweetList
-          });
-        } catch (variable) {
-          res.setHeader('Content-Type', 'text/html');
-          res.send("tried and failed");
-        }
+
+        res.setHeader('Content-Type', 'text/html');
+        res.send(tweetHtml);
+        // res.render("index", {
+        //   tweets: tweetList
+        // });
+
 
       } else {
         res.setHeader('Content-Type', 'text/html');
