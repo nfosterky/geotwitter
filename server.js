@@ -91,15 +91,20 @@ var d = {
           tweetList[i] = newTweet;
         }
 
-        res.render("index", {
-          tweets: tweetList
-        });
+        try {
+          res.render("index", {
+            tweets: tweetList
+          });
+        } catch (variable) {
+          res.setHeader('Content-Type', 'text/html');
+          res.send("tried and failed");
+        }
 
       } else {
         res.setHeader('Content-Type', 'text/html');
         res.send("fail");
       }
-      // console.log(JSON.stringify(response));  // Raw response object.?
+
     });
   },
   getTweetWidget: function (req, res, tweetId) {
@@ -246,11 +251,6 @@ var SampleApp = function() {
         self.routes['/test/:geocode'] = function(req, res) {
           d.getData(req, res, req.params.geocode);
         };
-
-
-        // self.routes['/test/:geocode'] = function(req, res) {
-        //   d.getData(req, res, req.params.geocode);
-        // };
 
     };
 
