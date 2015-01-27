@@ -80,13 +80,13 @@ var d = {
             screen_name : rawTweet.user.screen_name
           };
 
-          tweetHtml += "<div class='tweet'>" +
-              "<div>latitude: " + newTweet.lat + "</div>" +
-              "<div>longitude: "+ newTweet.lon + "</div>" +
-              "<div>text: "+ newTweet.text + "</div>" +
-              "<div>date: "+ newTweet.datetime + "</div>" +
-              "<div>screen_name: "+ newTweet.screen_name + "</div>" +
-              "</div>";
+          // tweetHtml += "<div class='tweet'>" +
+          //     "<div>latitude: " + newTweet.lat + "</div>" +
+          //     "<div>longitude: "+ newTweet.lon + "</div>" +
+          //     "<div>text: "+ newTweet.text + "</div>" +
+          //     "<div>date: "+ newTweet.datetime + "</div>" +
+          //     "<div>screen_name: "+ newTweet.screen_name + "</div>" +
+          //     "</div>";
 
           tweetList[i] = newTweet;
         }
@@ -241,13 +241,6 @@ var SampleApp = function() {
         self.routes['/varWeb'] = function(req, res) {
           res.setHeader('Content-Type', 'text/html');
           res.send(self.cache_get('varWeb.html') );
-        };
-
-        self.routes['/request'] = function(req, res) {
-          // d.getData(req, res);
-          console.log(req);
-          console.log("test request");
-          res.send("{t:'test'}");
         };
 
         self.routes['/test/:geocode'] = function(req, res) {
