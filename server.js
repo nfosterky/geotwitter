@@ -25,6 +25,10 @@ var d = {
     });
 
     var geocode = spec ? spec : '40.7207919,-74.0007582,0.5km';
+    var geoElems = geocode.split(","),
+      lat = geoElems[0]
+      lon = geoElems[1],
+      rad = geoElems[2];
 
     var now = new Date(),
       year = now.getFullYear(),
@@ -67,11 +71,10 @@ var d = {
         for (var i = 0, l = results.length; i < l; i++) {
           rawTweet = results[i];
 
-          // d.getTweetWidget(req, res, rawTweet.id_str);
           newTweet = {
             id          : rawTweet.id_str,
-            lat         : rawTweet.geo.coordinates[0],
-            lon         : rawTweet.geo.coordinates[1],
+            lat         : rawTweet.geo.coordinates[0] - lat,
+            lon         : rawTweet.geo.coordinates[1] - lon,
             text        : rawTweet.text,
             datetime    : rawTweet.created_at,
             screen_name : rawTweet.user.screen_name
@@ -88,13 +91,9 @@ var d = {
           tweetList[i] = newTweet;
         }
 
-        res.setHeader('Content-Type', 'text/html');
-        res.send("<html><head>" +
-            "<style>.tweet{border:1px solid black; padding:1rem;}</style>" +
-            "<body>" + tweetHtml +
-            "<script>var data = " + JSON.stringify(tweetList) + ";</script>" +
-            "</body></html>");
-        // res.send(JSON.stringify(tweetList));
+        res.render("index", {
+          tweets: tweetList
+        });
 
       } else {
         res.setHeader('Content-Type', 'text/html');
@@ -234,13 +233,6 @@ var SampleApp = function() {
     self.createRoutes = function() {
         self.routes = {};
 
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-
-            res.send("<html><body><img src='" + link +
-                "'></body></html>");
-        };
-
         self.routes['/'] = function(req, res) {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
@@ -259,9 +251,13 @@ var SampleApp = function() {
         };
 
         self.routes['/test/:geocode'] = function(req, res) {
-          console.log(req.params.geocode);
           d.getData(req, res, req.params.geocode);
         };
+
+
+        // self.routes['/test/:geocode'] = function(req, res) {
+        //   d.getData(req, res, req.params.geocode);
+        // };
 
     };
 
@@ -273,6 +269,7 @@ var SampleApp = function() {
     self.initializeServer = function() {
         self.createRoutes();
         self.app = express();
+        self.app.set("view engine", "jade");
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
@@ -282,8 +279,6 @@ var SampleApp = function() {
         // add subfolders -- needed to load js and css
         self.app.use("/css", express.static(__dirname + '/css'));
         self.app.use("/js", express.static(__dirname + '/js'));
-
-
     };
 
 
