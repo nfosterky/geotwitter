@@ -266,6 +266,8 @@ var SampleApp = function() {
         self.createRoutes();
         self.app = express();
         self.app.set("view engine", "jade");
+        console.warn("resolve jade");
+        console.warn(require.resolve("jade"))
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
