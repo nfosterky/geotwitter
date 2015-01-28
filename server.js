@@ -59,7 +59,6 @@ var d = {
 
       if (error) {
         console.log("error: " + JSON.stringify(error));
-        console.log();
         throw error;
       }
 
@@ -97,8 +96,10 @@ var d = {
         try {
           res.render("index", { tweets: tweetList });
         } catch (error) {
+          console.warn(error);
           res.setHeader('Content-Type', 'text/html');
           res.send("error");
+          throw(error);
         }
 
 
@@ -268,7 +269,7 @@ var SampleApp = function() {
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
+          self.app.get(r, self.routes[r]);
         }
 
         // add subfolders -- needed to load js and css
@@ -297,8 +298,8 @@ var SampleApp = function() {
     self.start = function() {
         //  Start the app on the specific interface (and port).
         self.app.listen(self.port, self.ipaddress, function() {
-            console.log('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
+          console.log('%s: Node server started on %s:%d ...',
+              Date(Date.now() ), self.ipaddress, self.port);
         });
     };
 
