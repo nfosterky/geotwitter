@@ -265,6 +265,7 @@ var SampleApp = function() {
     self.initializeServer = function() {
         self.createRoutes();
         self.app = express();
+        self.app.use("/views", express.static(__dirname + '/views'));
         self.app.set("view engine", "jade");
         console.warn("resolve jade");
         console.warn(require.resolve("jade"))
@@ -277,7 +278,7 @@ var SampleApp = function() {
         // add subfolders -- needed to load js and css
         self.app.use("/css", express.static(__dirname + '/css'));
         self.app.use("/js", express.static(__dirname + '/js'));
-        self.app.use("/views", express.static(__dirname + '/views'));
+
     };
 
 
