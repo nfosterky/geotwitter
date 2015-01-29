@@ -1,12 +1,10 @@
 ;(function(data){
-  var camera, scene, renderer;
+  var camera, scene, renderer, deviceControls;
 
   window.onload = function() {
     var tweetElement,
       tweetObject,
       tweet;
-
-    var deviceControls;
 
     if (typeof data !== undefined) {
       camera = new THREE.PerspectiveCamera(
@@ -14,6 +12,9 @@
 
       camera.position.y = 500;
       camera.position.z = 3000;
+
+      deviceControls = new THREE.DeviceOrientationControls( camera );
+      // deviceControls.connect();
 
       scene = new THREE.Scene();
 
@@ -38,6 +39,8 @@
         scene.add( tweetObject );
       }
 
+
+
       renderer = new THREE.CSS3DStereoRenderer();
       renderer.setSize( window.innerWidth, window.innerHeight );
       renderer.domElement.style.position = 'absolute';
@@ -49,26 +52,25 @@
       controls.maxDistance = 6000;
       controls.addEventListener( 'change', render );
 
-      deviceControls = new THREE.DeviceOrientationControls( camera );
 
-      render();
       animate();
 
       window.addEventListener( 'resize', onWindowResize, false );
     }
 
     function animate() {
-
+      // console.log("animate controls");
       requestAnimationFrame( animate );
 
       controls.update();
 
       deviceControls.update();
 
+      render();
     }
 
     function render() {
-      console.log("render");
+      // console.log("render");
       renderer.render( scene, camera );
     }
 

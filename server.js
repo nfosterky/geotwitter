@@ -93,14 +93,15 @@ var d = {
 
         // res.setHeader('Content-Type', 'text/html');
         // res.send(tweetHtml);
-        try {
-          res.render("index", { tweets: tweetList });
-        } catch (error) {
-          console.warn(error);
-          res.setHeader('Content-Type', 'text/html');
-          res.send("error");
-          throw(error);
-        }
+        res.render("index", { tweets: tweetList });
+        // try {
+        //
+        // } catch (error) {
+        //   console.warn(error);
+        //   res.setHeader('Content-Type', 'text/html');
+        //   res.send("error");
+        //   throw(error);
+        // }
 
 
       } else {
@@ -265,10 +266,10 @@ var SampleApp = function() {
     self.initializeServer = function() {
         self.createRoutes();
         self.app = express();
-        self.app.use("/views", express.static(__dirname + '/views'));
+        self.app.use("views", express.static(__dirname + '/views'));
         self.app.set("view engine", "jade");
-        console.warn("resolve jade");
-        console.warn(require.resolve("jade"))
+
+        // console.warn(require.resolve("jade"))
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
