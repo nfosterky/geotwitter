@@ -14,7 +14,6 @@
       camera.position.z = 3000;
 
       deviceControls = new THREE.DeviceOrientationControls( camera );
-      // deviceControls.connect();
 
       scene = new THREE.Scene();
 
@@ -38,8 +37,6 @@
 
         scene.add( tweetObject );
       }
-
-
 
       renderer = new THREE.CSS3DStereoRenderer();
       renderer.setSize( window.innerWidth, window.innerHeight );

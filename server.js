@@ -291,6 +291,7 @@ var SampleApp = function() {
         // add subfolders -- needed to load js and css
         self.app.use("/css", express.static(__dirname + '/css'));
         self.app.use("/js", express.static(__dirname + '/js'));
+        self.app.use("/textures", express.static(__dirname + '/textures'));
 
     };
 
