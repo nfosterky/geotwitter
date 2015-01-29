@@ -50,10 +50,35 @@
         controls.addEventListener( 'change', render );
 
 
-        animate();
 
         window.addEventListener( 'resize', onWindowResize, false );
+
+
+        var isFullscreen = false;
+
+        window.addEventListener( 'touchend', function () {
+
+          if ( isFullscreen === false ) {
+
+            document.body.webkitRequestFullscreen();
+
+            isFullscreen = true;
+
+          } else {
+
+            document.webkitExitFullscreen();
+
+            isFullscreen = false;
+
+          }
+
+        } );
+
+        animate();
+        
       }
+
+
 
       function animate() {
         // console.log("animate controls");
@@ -83,25 +108,6 @@
       }
 
     }
-    
-    var isFullscreen = false;
 
-    window.addEventListener( 'touchend', function () {
-
-      if ( isFullscreen === false ) {
-
-        document.body.webkitRequestFullscreen();
-
-        isFullscreen = true;
-
-      } else {
-
-        document.webkitExitFullscreen();
-
-        isFullscreen = false;
-
-      }
-
-    } );
 
   })(tweetList);
