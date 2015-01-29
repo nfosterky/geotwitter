@@ -83,5 +83,25 @@
       }
 
     }
+    
+    var isFullscreen = false;
+
+    window.addEventListener( 'touchend', function () {
+
+      if ( isFullscreen === false ) {
+
+        document.body.webkitRequestFullscreen();
+
+        isFullscreen = true;
+
+      } else {
+
+        document.webkitExitFullscreen();
+
+        isFullscreen = false;
+
+      }
+
+    } );
+
   })(tweetList);
-  
