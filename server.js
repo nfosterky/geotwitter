@@ -2,7 +2,8 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
-var jade = require('jade');
+// var jade = require('jade');
+var exphbs  = require('express-handlebars');
 // var d       = require('./twitterData.js');
 //
 var envVars = "";
@@ -257,6 +258,10 @@ var SampleApp = function() {
           d.getData(req, res, req.params.geocode);
         };
 
+        self.routes['/geotwitter'] = function(req, res) {
+          res.render('geotwitter');
+        };
+
     };
 
 
@@ -267,8 +272,11 @@ var SampleApp = function() {
     self.initializeServer = function() {
         self.createRoutes();
         self.app = express();
-        self.app.use("views", express.static(__dirname + '/views'));
-        self.app.set("view engine", "jade");
+        self.app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+        self.app.set('view engine', 'handlebars');
+
+        // self.app.use("views", express.static(__dirname + '/views'));
+        // self.app.set("view engine", "jade");
         // self.app.engine('.html', jade.__express);
         // self.app.set("view engine", "handlebars")
 
