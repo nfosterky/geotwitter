@@ -2,10 +2,10 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
-// var jade = require('jade');
+var jade = require('jade');
 var exphbs  = require('express-handlebars');
-// var d       = require('./twitterData.js');
-//
+var hbs;
+
 var envVars = "";
 
 if (!process.env.TWITTER_CONSUMER_KEY) {
@@ -92,19 +92,16 @@ var d = {
           tweetList[i] = newTweet;
         }
 
+        // res.render("index", { tweets: tweetList });
 
-        // res.setHeader('Content-Type', 'text/html');
-        // res.send(tweetHtml);
-        res.render("index", { tweets: tweetList });
-        // try {
-        //
-        // } catch (error) {
-        //   console.warn(error);
-        //   res.setHeader('Content-Type', 'text/html');
-        //   res.send("error");
-        //   throw(error);
-        // }
-
+        res.render('geotwitter', {
+          layout: 'main',
+          helpers: {
+            tweets: function() {
+              return JSON.stringify(tweetList);
+            }
+          }
+        });
 
       } else {
         res.setHeader('Content-Type', 'text/html');
@@ -254,12 +251,15 @@ var SampleApp = function() {
           res.send(self.cache_get('varWeb.html') );
         };
 
+
         self.routes['/test/:geocode'] = function(req, res) {
+          console.warn("test geocode:" + req.params.geocode);
           d.getData(req, res, req.params.geocode);
         };
 
         self.routes['/geotwitter'] = function(req, res) {
-          res.render('geotwitter');
+          d.getData(req, res, req.params.geocode);
+
         };
 
     };
@@ -272,13 +272,14 @@ var SampleApp = function() {
     self.initializeServer = function() {
         self.createRoutes();
         self.app = express();
-        self.app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+        hbs = exphbs.create();
+        self.app.engine('handlebars', hbs.engine);
         self.app.set('view engine', 'handlebars');
 
         // self.app.use("views", express.static(__dirname + '/views'));
         // self.app.set("view engine", "jade");
         // self.app.engine('.html', jade.__express);
-        // self.app.set("view engine", "handlebars")
+
 
         // console.warn(require.resolve("jade"))
 
