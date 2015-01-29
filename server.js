@@ -2,6 +2,7 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
+var jade = require('jade');
 // var d       = require('./twitterData.js');
 //
 var envVars = "";
@@ -268,6 +269,8 @@ var SampleApp = function() {
         self.app = express();
         self.app.use("views", express.static(__dirname + '/views'));
         self.app.set("view engine", "jade");
+        self.app.engine('.html', jade.__express);
+        // self.app.set("view engine", "handlebars")
 
         // console.warn(require.resolve("jade"))
 
