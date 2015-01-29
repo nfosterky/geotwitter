@@ -11,7 +11,7 @@
         40, window.innerWidth / window.innerHeight, 1, 10000 );
 
         camera.position.y = 500;
-        camera.position.z = 0;
+        camera.position.z = 3000;
 
         deviceControls = new THREE.DeviceOrientationControls( camera );
 
