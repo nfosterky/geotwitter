@@ -92,13 +92,17 @@ var d = {
           tweetList[i] = newTweet;
         }
 
-        // res.render("index", { tweets: tweetList });
-
         res.render('geotwitter', {
           layout: 'main',
           helpers: {
-            tweets: function() {
+            tweets: function () {
               return JSON.stringify(tweetList);
+            },
+            loc: function () {
+              return JSON.stringify({
+                lat: lat,
+                lon: lon
+              });
             }
           }
         });
@@ -246,12 +250,6 @@ var SampleApp = function() {
             // res.send(self.cache_get('index.html') );
             d.getData(req, res, req.params.geocode);
         };
-
-        // self.routes['/varWeb'] = function(req, res) {
-        //   res.setHeader('Content-Type', 'text/html');
-        //   res.send(self.cache_get('varWeb.html') );
-        // };
-
 
         self.routes['/test/:geocode'] = function(req, res) {
           console.warn("test geocode:" + req.params.geocode);
