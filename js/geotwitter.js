@@ -4,6 +4,8 @@
 
   var clock = new THREE.Clock();
 
+  var tweets = [];
+
   var move = {
     forward: false,
     back: false,
@@ -46,6 +48,8 @@
 
         tweetObject.lookAt( camera.position );
 
+        tweets[i] = tweetObject;
+
         scene.add( tweetObject );
       }
 
@@ -81,10 +85,18 @@
     }
   }
 
+  function rotateTweets () {
+    for (var i = 0; i < tweets.length; i++) {
+      tweets[i].lookAt(camera.position);
+    }
+  }
+
   function animate () {
     requestAnimationFrame( animate );
 
     updateMovement();
+
+    rotateTweets();
 
     deviceControls.update();
 
@@ -108,7 +120,7 @@
 
   function updateMovement () {
     var delta = clock.getDelta(); // seconds.
-  	var moveDistance = 200 * delta; // 200 pixels / second
+  	var moveDistance = 2500 * delta; // 200 pixels / second
 
     if (move.forward) {
       camera.translateZ( -moveDistance );
