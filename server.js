@@ -183,12 +183,12 @@ var SampleApp = function() {
      */
     self.populateCache = function() {
       if (typeof self.zcache === "undefined") {
-        self.zcache = { 'varWeb.html': '' };
+        self.zcache = { 'index.html': '' };
       }
 
       //  Local cache for static content.
       self.zcache['index.html'] = fs.readFileSync('./index.html');
-      self.zcache['varWeb.html'] = fs.readFileSync('./varWeb.html');
+      // self.zcache['varWeb.html'] = fs.readFileSync('./varWeb.html');
     };
 
 
@@ -247,10 +247,10 @@ var SampleApp = function() {
             d.getData(req, res, req.params.geocode);
         };
 
-        self.routes['/varWeb'] = function(req, res) {
-          res.setHeader('Content-Type', 'text/html');
-          res.send(self.cache_get('varWeb.html') );
-        };
+        // self.routes['/varWeb'] = function(req, res) {
+        //   res.setHeader('Content-Type', 'text/html');
+        //   res.send(self.cache_get('varWeb.html') );
+        // };
 
 
         self.routes['/test/:geocode'] = function(req, res) {
