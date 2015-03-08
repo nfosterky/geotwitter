@@ -242,8 +242,9 @@ var SampleApp = function() {
         self.routes = {};
 
         self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
+            // res.setHeader('Content-Type', 'text/html');
+            // res.send(self.cache_get('index.html') );
+            d.getData(req, res, req.params.geocode);
         };
 
         self.routes['/varWeb'] = function(req, res) {
@@ -259,7 +260,6 @@ var SampleApp = function() {
 
         self.routes['/geotwitter'] = function(req, res) {
           d.getData(req, res, req.params.geocode);
-
         };
 
     };
@@ -275,13 +275,6 @@ var SampleApp = function() {
         hbs = exphbs.create();
         self.app.engine('handlebars', hbs.engine);
         self.app.set('view engine', 'handlebars');
-
-        // self.app.use("views", express.static(__dirname + '/views'));
-        // self.app.set("view engine", "jade");
-        // self.app.engine('.html', jade.__express);
-
-
-        // console.warn(require.resolve("jade"))
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
