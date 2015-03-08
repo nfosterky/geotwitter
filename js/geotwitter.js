@@ -1,7 +1,22 @@
-;(function(data){
+// ;(function(data){
+  var data = tweetList;
   var camera, scene, renderer, deviceControls;
 
-  window.onload = function() {
+  var clock = new THREE.Clock();
+
+  var move = {
+    forward: false,
+    back: false,
+    left: false,
+    right: false
+  };
+
+  function init () {
+    var ELEM_WIDTH = 200,
+      ELEM_HEIGHT = 100;
+
+    var isFullscreen = false;
+
     var tweetElement,
       tweetObject, tweet;
 
@@ -12,11 +27,6 @@
       deviceControls = new THREE.DeviceOrientationControls( camera );
 
       scene = new THREE.Scene();
-
-      var ELEM_WIDTH = 200,
-        ELEM_HEIGHT = 100;
-
-      var isFullscreen = false;
 
       for (var i = 0; i < data.length; i++) {
         tweet = data[i];
@@ -65,33 +75,68 @@
 
       });
 
+      // addMovementControls();
+
       animate();
-
     }
+  }
 
-    function animate() {
-      requestAnimationFrame( animate );
+  function animate () {
+    requestAnimationFrame( animate );
 
-      deviceControls.update();
+    updateMovement();
 
-      render();
-    }
+    deviceControls.update();
 
-    function render() {
-      renderer.render( scene, camera );
-    }
+    render();
+  }
 
-    function onWindowResize() {
+  function render () {
+    renderer.render( scene, camera );
+  }
 
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
+  function onWindowResize () {
 
-      renderer.setSize( window.innerWidth, window.innerHeight );
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
 
-      render();
+    renderer.setSize( window.innerWidth, window.innerHeight );
 
-    }
+    render();
 
   }
 
-})(tweetList);
+  function updateMovement () {
+    var delta = clock.getDelta(); // seconds.
+  	var moveDistance = 200 * delta; // 200 pixels / second
+
+    if (move.forward) {
+      camera.translateZ( -moveDistance );
+    }
+
+    if (move.back) {
+      camera.translateZ( moveDistance );
+    }
+
+    if (move.left) {
+      camera.translateX( -moveDistance );
+    }
+
+    if (move.right) {
+      camera.translateX( moveDistance );
+    }
+
+    if (move.up) {
+      camera.translateY( moveDistance );
+    }
+
+    if (move.down) {
+      camera.translateY( -moveDistance );
+    }
+  }
+
+  window.onload = function() {
+    init();
+  }
+
+// })(tweetList);
