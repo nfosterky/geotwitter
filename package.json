@@ -1,34 +1,30 @@
 {
-  "name": "OpenShift-Sample-App",
+  "name": "Geo-Twitter-App",
   "version": "1.0.0",
-  "description": "OpenShift Sample Application",
+  "description": "See tweets around your location",
   "keywords": [
-    "OpenShift",
-    "Node.js",
-    "application",
-    "openshift"
+    "Twitter",
+    "Cardboard",
+    "VR"
   ],
   "author": {
     "name": "Nathaniel Foster",
     "email": "nathanielsmusi@gmail.com",
-    "url": "nfoster.net"
+    "url": "http://nfoster.net"
   },
   "homepage": "http://www.openshift.com/",
   "repository": {
     "type": "git",
     "url": "https://github.com/openshift/origin-server"
   },
-
   "engines": {
     "node": ">= 0.6.0",
     "npm": ">= 1.0.0"
   },
-
   "dependencies": {
     "express": "~3.4.4",
     "twitter": "~1.0.2",
     "express-handlebars": "*"
-
   },
   "devDependencies": {},
   "bundleDependencies": [],

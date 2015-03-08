@@ -2,7 +2,7 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
-var jade = require('jade');
+// var jade = require('jade');
 var exphbs  = require('express-handlebars');
 var hbs;
 
