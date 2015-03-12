@@ -40,11 +40,11 @@
         tweetElement.innerHTML = tweet.text;
 
         tweetObject = new THREE.CSS3DObject( tweetElement );
-        tweetObject.position.x = tweet.lat * 100000 * 50;
+        tweetObject.position.x = tweet.lat * 1000000;
 
         // y could be determined by age of tweet
         tweetObject.position.y = Math.random() * 1000;
-        tweetObject.position.z = tweet.lon * 100000 * 50;
+        tweetObject.position.z = tweet.lon * 1000000;
 
         tweetObject.lookAt( camera.position );
 
